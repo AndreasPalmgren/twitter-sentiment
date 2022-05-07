@@ -52,7 +52,7 @@ def update_gspc(start_value=10000, plot_gspc=True):
         axs.tick_params(axis='y', colors='#b760d1')
 
         axs.plot(df_gspc)
-        plt.savefig("docs\images\gspc.png")
+        plt.savefig("docs\images\gspc.jpg")
 
 if __name__ == "__main__":
     update_gspc()
