@@ -1,5 +1,5 @@
 import pandas as pd
-from datetime import date
+from datetime import date, timedelta
 from twitter_access import *
 
 def get_table(tweets, symbol, date):
@@ -21,10 +21,11 @@ def get_table(tweets, symbol, date):
         pass
 
 
-def get_tweets(stocks, date=date.today()):
+def get_tweets(stocks, date):
     """
     Get tweets for all stocks during given date.
     """
+    df = pd.DataFrame(columns=["symbol", "id", "text"])
     for stock in stocks:
         query = f"#{stock} -is:retweet -is:reply lang:en"
         
@@ -39,6 +40,8 @@ def get_tweets(stocks, date=date.today()):
 if __name__ == "__main__":
     client = access_twitter()
     
-    sp500 = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')[0]
+    stock_list = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')[0]["Symbol"]
 
-    print(get_tweets("AAPL"))
+    yesterday = date.today() - timedelta(days=1)
+
+    get_tweets(stock_list[:5], date=yesterday).to_csv('data/twitter_dataset.csv', index=False)
