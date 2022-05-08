@@ -23,7 +23,7 @@ else:
 
     # Twitter
     client = access_twitter()
-    get_tweets(client, stock_list, date=yesterday).to_csv('data/twitter_dataset.csv', index=False)
+    get_tweets(client, stock_list["symbol"], date=yesterday).to_csv('data/twitter_dataset.csv', index=False)
 
 
     # Sentiment portfolio

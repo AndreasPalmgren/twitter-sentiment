@@ -21,12 +21,12 @@ def get_table(tweets, symbol, date):
         pass
 
 
-def get_tweets(client, stocks, date):
+def get_tweets(client, stock_list, date):
     """
     Get tweets for all stocks during given date.
     """
     df = pd.DataFrame(columns=["symbol", "id", "text"])
-    for stock in stocks:
+    for stock in stock_list:
         query = f"#{stock} -is:retweet -is:reply lang:en"
         
         tweets = client.search_recent_tweets(query=query, 
@@ -40,7 +40,7 @@ def get_tweets(client, stocks, date):
 if __name__ == "__main__":
     client = access_twitter()
     
-    stock_list = pd.read_csv('data/stock_list.csv')
+    stock_list = pd.read_csv('data/stock_list.csv')["symbol"]
 
     yesterday = date.today() - timedelta(days=1)
 

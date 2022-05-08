@@ -40,10 +40,10 @@ def get_weights(df):
     positives.columns = positives.columns.get_level_values(0)
 
     df = pd.merge(total, positives, on="symbol", how="left")
-
+    
     # Get all symbols even if no tweets
     sp500 = pd.read_csv('data/stock_list.csv')
-    df = pd.merge(pd.DataFrame({'symbol':sp500}), df, on="symbol", how="left")
+    df = pd.merge(sp500, df, on="symbol", how="left")
 
     df["score"] = df["Analysis_y"].div(df["Analysis_x"])
     df["weight"] = df["score"]/df["score"].sum()
