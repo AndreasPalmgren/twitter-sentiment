@@ -11,11 +11,11 @@ from twitter_access import access_twitter
 
 df_weights = pd.read_csv('data/weights.csv')
 df_twitter = pd.read_csv('data/twitter_dataset.csv')
-stock_list = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')[0]["Symbol"]
+stock_list = pd.read_csv('data/stock_list.csv')
 
 # Date
-#yesterday = date.today() - timedelta(days=1)
-yesterday = '2022-05-07'
+yesterday = date.today() - timedelta(days=1)
+#yesterday = '2022-05-07'
 
 if yesterday in df_weights.columns:
     print("Date already in weights.")

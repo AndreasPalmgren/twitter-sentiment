@@ -54,5 +54,6 @@ def update_gspc(start_value=10000, plot_gspc=True):
         axs.plot(df_gspc)
         plt.savefig("docs\images\gspc.jpg")
 
+
 if __name__ == "__main__":
     update_gspc()

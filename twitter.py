@@ -40,7 +40,7 @@ def get_tweets(client, stocks, date):
 if __name__ == "__main__":
     client = access_twitter()
     
-    stock_list = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')[0]["Symbol"]
+    stock_list = pd.read_csv('data/stock_list.csv')
 
     yesterday = date.today() - timedelta(days=1)
 
