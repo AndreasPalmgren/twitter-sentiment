@@ -1,6 +1,6 @@
 import pandas as pd
 from datetime import date, timedelta
-from twitter_access import *
+from twitter_access import access_twitter
 
 def get_table(tweets, symbol, date):
     # Save data as dictionary
@@ -21,7 +21,7 @@ def get_table(tweets, symbol, date):
         pass
 
 
-def get_tweets(stocks, date):
+def get_tweets(client, stocks, date):
     """
     Get tweets for all stocks during given date.
     """
@@ -32,7 +32,7 @@ def get_tweets(stocks, date):
         tweets = client.search_recent_tweets(query=query, 
                                      start_time=f"{date}T00:00:00Z", 
                                      end_time=f"{date}T23:59:00Z",
-                                     max_results=10)
+                                     max_results=100)
         
         df = pd.concat([df, get_table(tweets, stock, date)], ignore_index=True)
     return df
@@ -44,4 +44,4 @@ if __name__ == "__main__":
 
     yesterday = date.today() - timedelta(days=1)
 
-    get_tweets(stock_list[:5], date=yesterday).to_csv('data/twitter_dataset.csv', index=False)
+    get_tweets(client, stock_list, date=yesterday).to_csv('data/twitter_dataset.csv', index=False)
