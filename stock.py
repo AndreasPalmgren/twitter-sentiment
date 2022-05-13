@@ -15,8 +15,8 @@ def set_style():
         "axes.spines.right" : False,
         "axes.spines.bottom" : True,
         "axes.spines.top" : False,
-        "axes.edgecolor" : "#512f5c",
-        "axes.linewidth" : 6, 
+        "axes.edgecolor" : "grey",
+        "axes.linewidth" : 2, 
         "xtick.bottom" : True,
         "xtick.labelbottom" : True,
         "ytick.labelleft" : True,
@@ -43,22 +43,25 @@ def update_gspc(start_value, end_date):
 
     #df_gspc.to_csv(filepath)
 
-    
+
 
 
 def update_sentiment(start_value, end_date):
-
+    """
+    Return valuation at end of day.
+    """
     stock_list = pd.read_csv('data/stock_list.csv')["symbol"]
     df_weights = pd.read_csv('data/weights.csv')
 
     stock_df = yf.download(stock_list.tolist(), "2022-05-03", end_date)['Close']
     stock_df = 1+stock_df.pct_change()
 
-    valuation = pd.DataFrame({'2022-05-02': [10000]})
+    valuation = pd.DataFrame({'2022-05-02': [start_value]})
 
-    for i, date in enumerate(df_weights.columns[2:]):
+    for i, date in enumerate(df_weights.columns[1:]):
         X =  stock_df.iloc[i+1].to_numpy() * df_weights.iloc[:,i+1]  * start_value
-        valuation[date] = X.sum()
+
+        valuation[str(stock_df.index[i+1]).split(" ")[0]] = X.sum()
         start_value = X.sum()
         
     return valuation
@@ -66,26 +69,27 @@ def update_sentiment(start_value, end_date):
 def update_portfolios(start_value, end_date, plot=True):
 
     df_gspc = update_gspc(start_value, end_date)
-    df = update_sentiment(start_value, end_date)
+    df_sent = update_sentiment(start_value, end_date)
 
-    df.loc[len(df.index)] = df_gspc
+    #df.loc[len(df.index)] = df_gspc
+    df = pd.DataFrame(data=np.array([df_sent.to_numpy()[0], df_gspc]).T, 
+                        columns=["Sentiment", "S&P 500"], index=df_sent.columns)
+
 
     # 0: Sentiment     1: GSPC
-    df.to_csv('data/portfolio_values.csv', index=False)
-    # Plot
+    df.to_csv('data/portfolio_values.csv', index_label="date")
 
+    # Plot
     if plot: 
         set_style()
 
         fig, axs = plt.subplots(1, figsize=(8, 8))
 
-        fig.patch.set_facecolor('#13011a')
-        axs.set_facecolor('#13011a')
-        axs.tick_params(axis='x', colors='#b760d1')
-        axs.tick_params(axis='y', colors='#b760d1')
+        fig.patch.set_facecolor('#ffffff')
+        axs.set_facecolor('#ffffff')
 
-        axs.plot(df.iloc[0,:], label='Sentiment portfolio')
-        axs.plot(df.iloc[1,:], label='S&P 500')
+        axs.plot(df.iloc[:,0], label='Sentiment portfolio')
+        axs.plot(df.iloc[:,1], label='S&P 500')
         axs.legend()
 
         plt.savefig("docs\images\portfolios.jpg")
@@ -95,5 +99,5 @@ if __name__ == "__main__":
 
     start_value = 10000
 
-    end_date = "2022-05-07"
+    end_date = "2022-05-13"
     update_portfolios(start_value, end_date)
